@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PS/IS 78Q T-shirt Store</title>
+  <link rel="stylesheet" type="text/css" href="product_style.css">
+</head>
+<body>
+  <div id="app">
+    <div class="cart">
+      <p>Cart({{ cart.length }})</p>
+    </div>
+
+    <product :premium="premium" @add-to-cart="updateCart"></product>
+ 
+  </div> 
+
+   <script src="vue.js"></script>
+   <script type="text/javascript" src="main.js"></script>
+</body>
+</html>
