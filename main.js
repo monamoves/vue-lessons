@@ -39,7 +39,7 @@ Vue.component('product', {
 
         <button @click="removeFromCart">Remove Item</button>
 
-        <customer-info @info-submitted="addCustomer"
+        <customer-info @info-submitted="addCustomer"></customer-info>
 
 
         <p><a :href="link">Better products can be found here</a></p>
@@ -72,21 +72,21 @@ Vue.component('product', {
       ],
       onSale: true,
       customers: []
-    };
+    }
   },
     methods: {
-      addToCart: function() {
+      addToCart() {
         this.$emit('add-to-cart',
           this.variants[this.selectedVariant].variantId)
       },
-      updateProduct: function(index) {
+      updateProduct(index) {
         this.selectedVariant = index
       },
-      removeFromCart: function() {
-        this.$emit('remove-from-cart', this.variants[this.selectedVariant].variantId)
-      }
+      removeFromCart() {
+        this.$emit('remove-from-cart', this.variants[this.selectedVariant].variantId);
+      },
       addCustomer(customerInfo) {
-        this.customers.push(customerInfo);
+        this.customers.push(customerInfo)
       }
     },
     computed: {
@@ -98,9 +98,9 @@ Vue.component('product', {
       },
       sale() {
         if (this.onSale) {
-          return this.brand + " " + this.product + ' ' + ' are on sale now!'
+          return this.brand + " " + this.product + ' ' + ' are on sale now!';
         }
-        return this.brand + " " + this.product + ' ' + 'is not on sale.'
+        return this.brand + " " + this.product + ' ' + 'is not on sale.';
       },
       shipping() {
         if (this.premium) {
@@ -109,12 +109,12 @@ Vue.component('product', {
         return 2.99;
       }
     }
-});
+})
 
-Vue.component("customer-info", {
+Vue.component('customer-info', {
   template:
   `<form class="customer-form" @submit.prevent="onSubmit">
-  <p class="error" v-if-:errors.length">
+  <p class="error" v-if="errors.length">
   <b>Please correct the following error(s):</b>
   <ul>
   <li v-for-"error in errors">{{ error }}</li>
@@ -127,13 +127,13 @@ Vue.component("customer-info", {
   </p>
 
   <p>
-  <label for="class"Class Number:</label>
-  <input id="class" v-model="class"></input>
+  <label for="classroom">Class Number:</label>
+  <input id="classroom" v-model="classroom"></input>
   </p>
 
   <p>
   <label for="teacher">Teacher: </label>
-  <input id="teacher" v=model="teacher">
+  <input id="teacher" v-model="teacher">
   </p>
 
   <p>
@@ -145,33 +145,33 @@ Vue.component("customer-info", {
   data() {
     return {
       name: null,
-      class: null,
+      classroom: null,
       teacher: null,
       errors: []
-    };
+    }
   },
   methods: {
     onSubmit() {
-      this.errors = [];
-      if (this.name && this.class && this.teacher) {
+      this.errors = []
+      if (this.name && this.classroom && this.teacher) {
         let customerInfo = {
           name: this.name,
-          class: this.class,
+          classroom: this.classroom,
           teacher: this.teacher
-        };
-        this.$emit("info-submitted", customerInfo);
-        this.name = null;
-        this.class = null;
-        this.teacher = null;
+        }
+        this.$emit("info-submitted", customerInfo)
+        this.name = null
+        this.classroom = null
+        this.teacher = null
       } else {
-        if (!this.name) this.errors.push("Name required");
-        if (!this.class) this.errors.push("Class required");
-        if (!this.teacher) this.errors.push("Teacher's name required");
+        if (!this.name) this.errors.push("Name required")
+        if (!this.classroom) this.errors.push("Class required")
+        if (!this.teacher) this.errors.push("Teacher's name required")
 
       }
     }
   }
-});
+})
 
 var app = new Vue({
   el: "#app",
@@ -181,7 +181,7 @@ var app = new Vue({
   },
   methods: {
     updateCart(id) {
-      this.cart.push(id)
+      this.cart.push(id);
     },
     removeItem(id) {
       for(var i = this.cart.length - 1; i >= 0; i--) {
@@ -191,7 +191,7 @@ var app = new Vue({
       }
     }  
   }
-});
+})
 
 
 
