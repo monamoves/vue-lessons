@@ -1,3 +1,5 @@
+var eventBus = new Vue()
+
 Vue.component('product', {
   props: {
     premium: {
@@ -8,11 +10,11 @@ Vue.component('product', {
   template: `
   <div class="product">
 
-  <div class="product-image">
+    <div class="product-image">
         <img :src="image" />
-      </div>
+    </div>
 
-      <div class="product-info">
+    <div class="product-info">
         <h1>{{ brand}} {{ product }}</h1>
         <p v-if="variants.variantQuantity > 10">In Stock</p>
         <p v-else-if="variants.variantQuantity <= 10 && variants.variantQuantity > 0">Almost sold out!</p>
@@ -35,15 +37,22 @@ Vue.component('product', {
           <li v-for="size in sizes">{{ size }}</li>
         </ul>
 
-        <button v-on:click="addToCart">Add to Cart</button>
+        <div>
+          <button v-on:click="addToCart">Add to Cart</button>
 
-        <button @click="removeFromCart">Remove Item</button>
+          <button @click="removeFromCart">Remove Item</button>
+        </div>
 
-        <customer-info @info-submitted="addCustomer"></customer-info>
+        <div class="customer">
+          <customer-tabs :customers="customers"></customer-tabs>
+        </div>
 
+        <div>
+        <cart :cart="cart"></cart>
+        </div>
 
-        <p><a :href="link">Better products can be found here</a></p>
-      </div>
+        <p><a :href="link">Return to PS/IS 78Q PTA</a></p>
+    </div>
 
   </div>
   `,
@@ -52,7 +61,7 @@ Vue.component('product', {
       product: "T-shirts",
       brand: "PS/IS 78Q",
       selectedVariant: 0,
-      link: "http://www.monamoves.com",
+      link: "http://www.psis78pta.org",
       inventory: 0,
       details: ["100% cotton", "adult and child sizes available"],
       sizes: ["small", "medium", "large", "x-large"],
@@ -85,8 +94,8 @@ Vue.component('product', {
       removeFromCart() {
         this.$emit('remove-from-cart', this.variants[this.selectedVariant].variantId);
       },
-      addCustomer(customerInfo) {
-        this.customers.push(customerInfo)
+      showCart() {
+        this.cart = index
       }
     },
     computed: {
@@ -108,6 +117,11 @@ Vue.component('product', {
         }
         return 2.99;
       }
+    },
+    mounted() {
+      eventBus.$on('info-submitted', customerInfo => {
+        this.customers.push(customerInfo)
+      })
     }
 })
 
@@ -159,16 +173,88 @@ Vue.component('customer-info', {
           classroom: this.classroom,
           teacher: this.teacher
         }
-        this.$emit("info-submitted", customerInfo)
+        eventBus.$emit("info-submitted", customerInfo)
         this.name = null
         this.classroom = null
         this.teacher = null
       } else {
-        if (!this.name) this.errors.push("Name required")
-        if (!this.classroom) this.errors.push("Class required")
-        if (!this.teacher) this.errors.push("Teacher's name required")
+        if (!this.name) this.errors.push("Name required.")
+        if (!this.classroom) this.errors.push("Class required.")
+        if (!this.teacher) this.errors.push("Teacher's name required.")
 
       }
+    }
+  }
+})
+
+Vue.component('customer-tabs', {
+  props: {
+    customers: {
+      type: Array,
+      required: false
+    }
+  },
+  template: `
+  <div>
+    <div>
+    <span class="tab"
+          :class="{ activeTab: selectedTab === tab }"
+          v-for="(tab, index) in tabs" 
+          :key="index"
+          @click="selectedTab = tab">
+          {{ tab }}</span>
+    </div>
+
+    <div v-show="selectedTab === 'Entered Info'">
+        <p v-if="!customers.length">You have not entered your customer info.</p>
+        <ul v-else>
+        <li v-for="(customer, index) in customers" :key="index">
+        <p>Customer Name: {{ customer.name }}</p>
+        <p>Classroom Number: {{ customer.classroom }}</p>
+        <p>Teacher Name: {{ customer.teacher }}</p>
+        </li>
+        </ul>
+    </div>
+
+        <customer-info v-show="selectedTab === 'Customer Form'"></customer-info>
+
+        <cart v-show="selectedTab === 'View Cart'"></cart>
+
+
+  </div>
+
+  `,
+  data() {
+    return {
+      tabs: ['Entered Info', 'Customer Form'],
+      selectedTab: 'Entered Info'
+    }
+  },
+})
+
+Vue.component('cart', {
+  props: {
+    cart: {
+      type: Array,
+      required: false
+    }
+  },
+  template: `
+    <div class="cart">
+      <span class="view-cart" 
+      v-for="(cart, index) in cart" 
+      :key="index" 
+      @click="showCart">{{ cart }} View Cart</span>
+
+      <div>
+        <cart :cart="cart"></cart>
+        </div>
+
+    </div>
+  `,
+  methods: {
+    onClick() {
+      this.cart = []
     }
   }
 })
